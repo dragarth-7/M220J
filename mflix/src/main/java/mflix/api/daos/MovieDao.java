@@ -126,7 +126,7 @@ public class MovieDao extends AbstractMFlixDao {
                     .map(countyName -> eq("countries", countyName))
                     .toArray(Bson[]::new)
     );
-    Bson projection = fields(include("title"), excludeId());
+    Bson projection = fields(include("title"));
     List<Document> movies = new ArrayList<>();
 
     moviesCollection
