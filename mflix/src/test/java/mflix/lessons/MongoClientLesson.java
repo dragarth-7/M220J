@@ -8,7 +8,10 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @see org.bson.codecs.Codec
  */
 @SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class MongoClientLesson extends AbstractLesson {
 
   private MongoClient mongoClient;
@@ -29,7 +33,8 @@ public class MongoClientLesson extends AbstractLesson {
 
   private MongoCollection<Document> collection;
 
-  private String uri = "<YOUR SRV STRING from the application.properties file>";
+  @Value("${spring.mongodb.uri}")
+  private String uri;
 
   private Document document;
 
