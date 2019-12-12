@@ -66,6 +66,7 @@ public class GetCommentsTest extends TicketTest {
     Document movieDocument = dao.getMovie(movieId);
     Assert.assertNotNull("Should not return null. Check getMovie()", movieDocument);
 
+    System.out.println(movieDocument);
     List<Document> commentDocs = (List<Document>) movieDocument.get("comments");
     int expectedSize = 147;
     Assert.assertEquals(
