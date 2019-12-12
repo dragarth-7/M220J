@@ -79,12 +79,16 @@ public class CommentDao extends AbstractMFlixDao {
    * returns the resulting Comment object.
    */
   public Comment addComment(Comment comment) {
-
+    if (comment.getId() == null) {
+      throw new IncorrectDaoOperation(comment.getText());
+    }
+    commentCollection.insertOne(comment);
+    return comment;
     // TODO> Ticket - Update User reviews: implement the functionality that enables adding a new
     // comment.
     // TODO> Ticket - Handling Errors: Implement a try catch block to
     // handle a potential write exception when given a wrong commentId.
-    return null;
+//    return null;
   }
 
   /**
@@ -101,12 +105,18 @@ public class CommentDao extends AbstractMFlixDao {
    * @return true if successfully updates the comment text.
    */
   public boolean updateComment(String commentId, String text, String email) {
+    Bson commentFilter = Filters.and(Filters.eq(new ObjectId(commentId)), Filters.eq("email", email));
+    if (commentCollection.find(commentFilter).first() == null) {
+      return commentCollection.updateOne(Filters.eq("email", email), Updates.set("text", text)).getModifiedCount() > 0;
+    } else {
+      return commentCollection.updateOne(Filters.eq(new ObjectId(commentId)), Updates.set("text", text)).getModifiedCount() > 0;
+    }
 
     // TODO> Ticket - Update User reviews: implement the functionality that enables updating an
     // user own comments
     // TODO> Ticket - Handling Errors: Implement a try catch block to
     // handle a potential write exception when given a wrong commentId.
-    return false;
+
   }
 
   /**
