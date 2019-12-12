@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import static com.mongodb.client.model.Updates.*;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -84,14 +85,18 @@ public class UserDao extends AbstractMFlixDao {
    * @return true if successful
    */
   public boolean createUserSession(String userId, String jwt) {
-    Session session = new Session();
-    session.setUserId(userId);
-    session.setJwt(jwt);
-    sessionsCollection.insertOne(session);
+    Session userSession = getUserSession(userId);
+    if (userSession == null) {
+      Session session = new Session();
+      session.setUserId(userId);
+      session.setJwt(jwt);
+      sessionsCollection.insertOne(session);
+      return session.getId() != null;
+    } else {
+      return sessionsCollection.updateOne(Filters.eq("user_id", userId), set("jwt", jwt)).getModifiedCount() > 0;
+    }
     //TODO> Ticket: User Management - implement the method that allows session information to be
     // stored in it's designated collection.
-
-    return session.getId() != null;
     //TODO > Ticket: Handling Errors - implement a safeguard against
     // creating a session with the same jwt token.
   }
@@ -151,8 +156,12 @@ public class UserDao extends AbstractMFlixDao {
   public boolean updateUserPreferences(String email, Map<String, ?> userPreferences) {
     //TODO> Ticket: User Preferences - implement the method that allows for user preferences to
     // be updated.
+    if (userPreferences == null) {
+      throw new IncorrectDaoOperation(email);
+    }
+    return usersCollection.updateOne(
+            Filters.eq("email", email), set("preferences", userPreferences)).getModifiedCount() > 0;
     //TODO > Ticket: Handling Errors - make this method more robust by
     // handling potential exceptions when updating an entry.
-    return false;
   }
 }
