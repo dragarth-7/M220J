@@ -1,22 +1,15 @@
 -------------------------------------------------------------------------------
 Test set: mflix.api.daos.UserPreferencesTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.529 s <<< FAILURE! - in mflix.api.daos.UserPreferencesTest
-testNullPreferences(mflix.api.daos.UserPreferencesTest)  Time elapsed: 0 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'mongoClient' defined in mflix.config.MongoDBConfiguration: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.mongodb.client.MongoClient]: Factory method 'mongoClient' threw exception; nested exception is java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.mongodb.client.MongoClient]: Factory method 'mongoClient' threw exception; nested exception is java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
-Caused by: java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
+Tests run: 3, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.562 s <<< FAILURE! - in mflix.api.daos.UserPreferencesTest
+testNullPreferences(mflix.api.daos.UserPreferencesTest)  Time elapsed: 0.165 s  <<< FAILURE!
+java.lang.AssertionError: Expected exception: mflix.api.daos.IncorrectDaoOperation
 
-testUpdateSinglePreferences(mflix.api.daos.UserPreferencesTest)  Time elapsed: 0 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'mongoClient' defined in mflix.config.MongoDBConfiguration: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.mongodb.client.MongoClient]: Factory method 'mongoClient' threw exception; nested exception is java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.mongodb.client.MongoClient]: Factory method 'mongoClient' threw exception; nested exception is java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
-Caused by: java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
+testUpdateSinglePreferences(mflix.api.daos.UserPreferencesTest)  Time elapsed: 0.177 s  <<< FAILURE!
+java.lang.AssertionError: The response of the updateUserPreferences should result in true. Check your implementation of this method
+	at mflix.api.daos.UserPreferencesTest.testUpdateSinglePreferences(UserPreferencesTest.java:59)
 
-testMultiplePreferences(mflix.api.daos.UserPreferencesTest)  Time elapsed: 0 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'mongoClient' defined in mflix.config.MongoDBConfiguration: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.mongodb.client.MongoClient]: Factory method 'mongoClient' threw exception; nested exception is java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.mongodb.client.MongoClient]: Factory method 'mongoClient' threw exception; nested exception is java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
-Caused by: java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
+testMultiplePreferences(mflix.api.daos.UserPreferencesTest)  Time elapsed: 0.196 s  <<< FAILURE!
+java.lang.AssertionError: The response of the updateUserPreferences should result in true. Check your implementation of this method
+	at mflix.api.daos.UserPreferencesTest.testMultiplePreferences(UserPreferencesTest.java:85)
 

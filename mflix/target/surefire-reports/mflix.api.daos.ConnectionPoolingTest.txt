@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: mflix.api.daos.ConnectionPoolingTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.112 s <<< FAILURE! - in mflix.api.daos.ConnectionPoolingTest
-testConnectionPoolSize(mflix.api.daos.ConnectionPoolingTest)  Time elapsed: 0.063 s  <<< ERROR!
-java.lang.IllegalArgumentException: The connection string is invalid. Connection strings must start with either 'mongodb://' or 'mongodb+srv://
-	at mflix.api.daos.ConnectionPoolingTest.setUp(ConnectionPoolingTest.java:16)
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 2.583 s <<< FAILURE! - in mflix.api.daos.ConnectionPoolingTest
+testConnectionPoolSize(mflix.api.daos.ConnectionPoolingTest)  Time elapsed: 2.228 s  <<< FAILURE!
+java.lang.AssertionError: Do not forget to set the maxPoolSize parameter in your spring.mongodb.uri key in the properties file
+	at mflix.api.daos.ConnectionPoolingTest.testConnectionPoolSize(ConnectionPoolingTest.java:21)
 
