@@ -1,8 +1,9 @@
 package mflix.api.models;
 
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.types.ObjectId;
 
-public class Session {
+public class Session extends AbstractSession {
 
   @BsonProperty(value = "user_id")
   private String userId;
@@ -27,5 +28,10 @@ public class Session {
 
   public void setJwt(String jwt) {
     this.jwt = jwt;
+  }
+
+  public Session withNewId() {
+    setId(new ObjectId().toHexString());
+    return this;
   }
 }

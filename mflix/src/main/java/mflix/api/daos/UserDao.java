@@ -5,10 +5,12 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import mflix.api.daos.utils.SessionCodec;
 import mflix.api.models.Session;
 import mflix.api.models.User;
 import org.bson.Document;
@@ -24,8 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.bson.codecs.configuration.CodecRegistries.*;
 
 @Configuration
 public class UserDao extends AbstractMFlixDao {
@@ -33,7 +34,7 @@ public class UserDao extends AbstractMFlixDao {
   private final MongoCollection<User> usersCollection;
   //TODO> Ticket: User Management - do the necessary changes so that the sessions collection
   //returns a Session object
-  private final MongoCollection<Document> sessionsCollection;
+  private final MongoCollection<Session> sessionsCollection;
 
   private final Logger log;
 
@@ -50,7 +51,14 @@ public class UserDao extends AbstractMFlixDao {
     log = LoggerFactory.getLogger(this.getClass());
     //TODO> Ticket: User Management - implement the necessary changes so that the sessions
     // collection returns a Session objects instead of Document objects.
-    sessionsCollection = db.getCollection("sessions");
+    SessionCodec sessionCodec = new SessionCodec();
+
+    CodecRegistry codecRegistry =
+            fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), fromCodecs(sessionCodec));
+
+    sessionsCollection = db.getCollection("sessions", Session.class)
+            .withCodecRegistry(codecRegistry);
+
   }
 
   /**
@@ -76,9 +84,14 @@ public class UserDao extends AbstractMFlixDao {
    * @return true if successful
    */
   public boolean createUserSession(String userId, String jwt) {
+    Session session = new Session();
+    session.setUserId(userId);
+    session.setJwt(jwt);
+    sessionsCollection.insertOne(session);
     //TODO> Ticket: User Management - implement the method that allows session information to be
     // stored in it's designated collection.
-    return false;
+
+    return session.getId() != null;
     //TODO > Ticket: Handling Errors - implement a safeguard against
     // creating a session with the same jwt token.
   }
@@ -90,7 +103,7 @@ public class UserDao extends AbstractMFlixDao {
    * @return User object or null.
    */
   public User getUser(String email) {
-    User user = null;
+    User user = usersCollection.find(Filters.eq("email", email)).first();
     //TODO> Ticket: User Management - implement the query that returns the first User object.
     return user;
   }
@@ -104,12 +117,12 @@ public class UserDao extends AbstractMFlixDao {
   public Session getUserSession(String userId) {
     //TODO> Ticket: User Management - implement the method that returns Sessions for a given
     // userId
-    return null;
+    return sessionsCollection.find(Filters.eq("user_id", userId)).first();
   }
 
   public boolean deleteUserSessions(String userId) {
     //TODO> Ticket: User Management - implement the delete user sessions method
-    return false;
+    return sessionsCollection.deleteOne(Filters.eq("user_id", userId)).getDeletedCount() > 0;
   }
 
   /**
@@ -119,11 +132,12 @@ public class UserDao extends AbstractMFlixDao {
    * @return true if user successfully removed
    */
   public boolean deleteUser(String email) {
+    deleteUserSessions(email);
     // remove user sessions
     //TODO> Ticket: User Management - implement the delete user method
     //TODO > Ticket: Handling Errors - make this method more robust by
     // handling potential exceptions.
-    return false;
+    return usersCollection.deleteOne(Filters.eq("email", email)).getDeletedCount() > 0;
   }
 
   /**

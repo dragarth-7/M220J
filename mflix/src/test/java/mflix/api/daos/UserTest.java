@@ -58,6 +58,7 @@ public class UserTest extends TicketTest {
     db.getCollection("users").deleteMany(new Document("email", "log@out.com"));
     db.getCollection("sessions").deleteMany(new Document("user_id", "log@out" +
             ".com"));
+    db.getCollection("sessions").deleteOne(new Document("user_id", email ));
   }
 
   @Test
