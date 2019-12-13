@@ -66,7 +66,4 @@ public class SessionCodec implements CollectibleCodec<Session> {
 
         return new BsonString(session.getUserId());
     }
-
-
-
 }

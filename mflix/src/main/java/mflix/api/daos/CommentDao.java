@@ -11,6 +11,7 @@ import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import mflix.api.daos.utils.CriticCodec;
 import mflix.api.models.Comment;
 import mflix.api.models.Critic;
 import org.bson.Document;
@@ -26,11 +27,15 @@ import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static com.mongodb.client.model.Aggregates.*;
+import static com.mongodb.client.model.Sorts.*;
+import static com.mongodb.client.model.Accumulators.sum;
+import static org.bson.codecs.configuration.CodecRegistries.*;
 
 @Component
 public class CommentDao extends AbstractMFlixDao {
@@ -157,6 +162,25 @@ public class CommentDao extends AbstractMFlixDao {
     // // guarantee for the returned documents. Once a commenter is in the
     // // top 20 of users, they become a Critic, so mostActive is composed of
     // // Critic objects.
+    CriticCodec criticCodec = new CriticCodec();
+    CodecRegistry codecRegistry =
+            fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), fromCodecs(criticCodec));
+
+    List<Bson> pipeline = new ArrayList<>();
+
+
+    Bson grouping = group("$email", sum("count", 1));
+    Bson sorting = sort(descending("count"));
+    Bson limiting = limit(20);
+    pipeline.add(grouping);
+    pipeline.add(sorting);
+    pipeline.add(limiting);
+
+    MongoCollection<Critic> criticCollection = db.getCollection(COMMENT_COLLECTION, Critic.class)
+            .withCodecRegistry(codecRegistry);
+
+    criticCollection.aggregate(pipeline).iterator().forEachRemaining(mostActive::add);
+
     return mostActive;
   }
 }
